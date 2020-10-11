@@ -2,18 +2,16 @@ import React, { useState, useEffect } from "react";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
-import CustomModal from "../CustomModal";
+import CustomModal from "components/CustomModal";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import Alert from 'react-bootstrap/Alert';
 import ReactListInput from 'react-list-input';
-import { Item, StagingItem } from "../../helpers/reactListInputHelper"
-import showDateFromTo from "../../helpers/dateUtils";
+import { Item, StagingItem } from "helpers/reactListInputHelper"
+import showDateFromTo from "helpers/dateUtils";
 
 
-export default function Experience(props) {
+export default function ExperienceForm(props) {
   const emptyExperience = {
     employer_name: "",
     employer_description: "",

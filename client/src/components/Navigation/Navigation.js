@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { Navbar, FormControl, Button, Nav, Form } from "react-bootstrap";
+import { Navbar, Button, Nav } from "react-bootstrap";
 import { Switch, Route, Link } from "react-router-dom";
-import Login from "../components/userLR/Login";
-import Registration from "../components/userLR/Registration";
-import ResumeBuilder from "../components/ResumeBuilder";
+import Login from "components/userLR/Login";
+import Registration from "components/userLR/Registration";
+import ResumeBuilder from "components/ResumeBuilder/ResumeBuilder";
 import { useHistory } from 'react-router-dom';
-import logo from "../img/logo.png";
-import "./NavigationBar.css"
-import Landing from "../components/landingPage/Landing"
+import logo from "img/logo.png";
+import "./Navigation.css"
+import Landing from "components/LandingPage/Landing"
 import axios from 'axios';
 
-export default function Navigationbar() {
+export default function Navigation() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 

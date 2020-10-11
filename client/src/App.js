@@ -1,16 +1,16 @@
 import React from 'react';
-import useApplicationData from './hooks/useApplicationData';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "react-datepicker/dist/react-datepicker.css";
 import { BrowserRouter as Router } from "react-router-dom";
-import Navigationbar from './components/Navigationbar';
+import Navigation from 'components/Navigation/Navigation';
 
 
 function App() {
 
   return (
     <Router>
-      <Navigationbar />
+      <Navigation />
     </Router>
   );
 }

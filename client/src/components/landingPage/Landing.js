@@ -1,26 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// reactstrap components
 import {
-  Badge,
-  Button,
   Card,
   CardBody,
-  CardImg,
-  FormGroup,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
   Container,
   Row,
   Col
 } from "reactstrap";
-import sample1 from "../../img/sample1.png";
-import sample2 from "../../img/Sample2.png";
-import sample3 from "../../img/Sample3.png";
+import sample1 from "img/sample1.png";
+import sample2 from "img/Sample2.png";
+import sample3 from "img/Sample3.png";
 import "./landing.css"
-import ResumeBuilder from "../ResumeBuilder";
 
 export default function Landing(props) {
 
@@ -51,7 +41,7 @@ export default function Landing(props) {
           <Col lg="3">
             <Card className="card-lift--hover shadow border-0 box">
               <CardBody>
-                <img className={"resumeTemplates"} src={sample1} />
+                <img className={"resumeTemplates"} src={sample1} alt="resume sample"/>
                 <div className="text-center">
                   <div className="btn-wrapper">
                     <Link to="/resume" className="template-btn" style={{
@@ -65,7 +55,7 @@ export default function Landing(props) {
           <Col lg="3">
             <Card className="card-lift--hover shadow border-0">
               <CardBody>
-                <img className={"resumeTemplates"} src={sample2} />
+                <img className={"resumeTemplates"} src={sample2} alt="resume sample"/>
                 <div className="text-center">
                   <div className="btn-wrapper">
                     <Link to="/resume" className="template-btn"
@@ -81,7 +71,7 @@ export default function Landing(props) {
           <Col lg="3">
             <Card className="card-lift--hover shadow border-0">
               <CardBody>
-                <img className={"resumeTemplates"} src={sample3} />
+                <img className={"resumeTemplates"} src={sample3} alt="resume sample"/>
                 <div className="text-center">
                   <div className="btn-wrapper">
                     <Link to="/resume" className="template-btn">Select template 3</Link>

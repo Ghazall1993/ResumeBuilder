@@ -2,21 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import FormContainer from "./FormContainer";
-import SummaryForm from "./forms/SummaryForm";
+import FormContainer from "components/FormContainer";
+import SummaryForm from "components/forms/SummaryForm";
 import axios from "axios";
-import LeftSideBar from "../components/LeftSidebar/LeftSidebar";
+import LeftSideBar from "components/LeftSidebar/LeftSidebar";
 import './ResumeBuilder.css';
-import PersonalInfoForm from "./forms/PersonalInfoForm";
-import CoreCompetencyForm from "./forms/CoreCompetencyForm"
-import EducationForm from "./forms/EducationForm"
-import CustomerServiceTemplate from "./templates/customerService/CustomerServiceTemplate"
-import Experience from "./forms/Experience"
-import ReferenceForm from "./forms/ReferenceForm"
-import Preview from "./preview";
+import PersonalInfoForm from "components/forms/PersonalInfoForm";
+import CoreCompetencyForm from "components/forms/CoreCompetencyForm";
+import EducationForm from "components/forms/EducationForm"
+import CustomerServiceTemplate from "components/templates/customerService/CustomerServiceTemplate"
+import ExperienceForm from "components/forms/ExperienceForm"
+import ReferenceForm from "components/forms/ReferenceForm"
+import Preview from "components/Preview";
 import { debounce } from "lodash";
-
-
 
 export default function ResumeBuilder(props) {
 
@@ -53,7 +51,7 @@ export default function ResumeBuilder(props) {
     { id: "summary", title: "Summary", component: <SummaryForm onUpdate={resumeDataOnUpdate} data={resumeData.summary} /> },
     { id: "educations", title: "Education", component: <EducationForm onUpdate={resumeDataOnUpdate} data={resumeData.educations} /> },
     { id: "core_competencies", title: "Core Competencies", component: <CoreCompetencyForm onUpdate={resumeDataOnUpdate} data={resumeData.core_competencies} /> },
-    { id: "experience", title: "Experience", component: <Experience onUpdate={resumeDataOnUpdate} data={resumeData.experience} /> },
+    { id: "experience", title: "Experience", component: <ExperienceForm onUpdate={resumeDataOnUpdate} data={resumeData.experience} /> },
     { id: "references", title: "References", component: <ReferenceForm onUpdate={resumeDataOnUpdate} data={resumeData.references} /> }
   ]
 

@@ -2,13 +2,11 @@ import React, { useState, useEffect } from "react";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import CustomModal from "../CustomModal";
 import Alert from 'react-bootstrap/Alert';
-import showDateFromTo from "../../helpers/dateUtils";
+import showDateFromTo from "helpers/dateUtils";
 
 export default function EducationForm(props) {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -89,10 +87,6 @@ export default function EducationForm(props) {
       <Alert variant="primary">
         <Alert.Heading> Writing education in resume is mandatory!</Alert.Heading>
         <p>
-          Share the degrees you’ve earned and schools you’ve attended.
-        Share the degrees you’ve earned and schools you’ve attended. 
-          Share the degrees you’ve earned and schools you’ve attended.
-        Share the degrees you’ve earned and schools you’ve attended. 
           Share the degrees you’ve earned and schools you’ve attended.
           Remember, learning doesn’t stop when you graduate.
           This is a great place to add in any courses you’ve taken or certifications you’ve earned in the professional world as well!

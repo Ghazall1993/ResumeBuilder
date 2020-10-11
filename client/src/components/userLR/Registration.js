@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Button, FormGroup, FormControl, FormLabel } from "react-bootstrap";
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +7,7 @@ import {
   Card,
   CardBody,
 } from "reactstrap";
-import avatar from "../../img/avatar.png";
+import avatar from "img/avatar.png";
 
 
 export default function Registration(props) {

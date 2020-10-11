@@ -1,6 +1,6 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import Experience from '../components/forms/Experience';
+import Experience from 'components/forms/ExperienceForm';
 
 export default {
   title: 'Experience',

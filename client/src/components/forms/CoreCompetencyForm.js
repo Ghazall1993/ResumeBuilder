@@ -3,12 +3,11 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
 import Button from 'react-bootstrap/Button';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Card from 'react-bootstrap/Card';
-import CustomModal from "../CustomModal";
+import CustomModal from "components/CustomModal";
 import ReactStars from 'react-stars'
 
-export default function CoreCompetencyForm(props) {
+export default function CoreCompetencyForm({ data, onUpdate }) {
   const ratingMap = {
     1: "Beginner",
     2: "Basic",
@@ -19,21 +18,21 @@ export default function CoreCompetencyForm(props) {
 
   const [showAddModal, setShowAddModal] = useState(false);
   // showEditModal conatins the id of the selected skill to be editted
-  const [showEditModal, setShowEditModal] = useState();
-  const [coreCompetencies, setCoreCompetencies] = useState({skills:[]});
+  const [showEditModal, setShowEditModal] = useState(-1);
+  const [coreCompetencies, setCoreCompetencies] = useState({ skills: [] });
   const [newSkill, setNewSkill] = useState({ name: "", rating: 1 });
   const [editSkill, setEditSkill] = useState({});
 
   useEffect(() => {
-    if (props.data) {
-      setCoreCompetencies(props.data)
+    if (data) {
+      setCoreCompetencies(data)
     }
-  }, [props.data])
+  }, [data])
 
   const onHeadingChange = (event) => {
     const newCoreCompetencies = { ...coreCompetencies, heading: event.target.value }
     setCoreCompetencies(newCoreCompetencies);
-    props.onUpdate({ core_competencies: newCoreCompetencies });
+    onUpdate({ core_competencies: newCoreCompetencies });
   }
 
   const handleNewSkillChange = (event) => {
@@ -46,7 +45,7 @@ export default function CoreCompetencyForm(props) {
     const allSkills = [...coreCompetencies.skills, skill]
     const newCoreCompetencies = { ...coreCompetencies, skills: allSkills };
     setCoreCompetencies(newCoreCompetencies);
-    props.onUpdate({ core_competencies: newCoreCompetencies });
+    onUpdate({ core_competencies: newCoreCompetencies });
     setShowAddModal(false);
     setNewSkill({ name: "", rating: 1 })
   }
@@ -59,11 +58,11 @@ export default function CoreCompetencyForm(props) {
 
   const saveEdittedSkill = (skill) => {
     const newSkills = [...coreCompetencies.skills];
-    newSkills[showEditModal - 1] = skill;
+    newSkills[showEditModal] = skill;
     const newCoreCompetencies = { ...coreCompetencies, skills: newSkills };
     setCoreCompetencies(newCoreCompetencies);
-    props.onUpdate({ core_competencies: newCoreCompetencies });
-    setShowEditModal(false);
+    onUpdate({ core_competencies: newCoreCompetencies });
+    setShowEditModal(-1);
   }
 
 
@@ -72,7 +71,7 @@ export default function CoreCompetencyForm(props) {
     newSkills.splice(index, 1)
     const newCoreCompetencies = { ...coreCompetencies, skills: newSkills };
     setCoreCompetencies(newCoreCompetencies);
-    props.onUpdate({ core_competencies: newCoreCompetencies });
+    onUpdate({ core_competencies: newCoreCompetencies });
   }
 
   return (
@@ -114,7 +113,7 @@ export default function CoreCompetencyForm(props) {
                 <div>
                   <Button variant="primary" type="button" style={{ margin: '.2rem' }}
                     onClick={() => {
-                      setShowEditModal(index + 1)
+                      setShowEditModal(index)
                       setEditSkill(item)
                     }
                     }>Edit</Button>
@@ -152,6 +151,7 @@ export default function CoreCompetencyForm(props) {
             <Form.Group as={Col} xs={5} controlId="rating">
               <Form.Label>Rating</Form.Label>
               <ReactStars
+                half={false}
                 count={5}
                 size={24}
                 color2={'#ffd700'}
@@ -165,8 +165,8 @@ export default function CoreCompetencyForm(props) {
 
       <CustomModal
         title="Edit Skill"
-        show={showEditModal}
-        onClose={() => setShowEditModal(false)}
+        show={showEditModal > -1}
+        onClose={() => setShowEditModal(-1)}
         onSubmit={() => saveEdittedSkill(editSkill)}
       >
         <Form>
@@ -182,6 +182,7 @@ export default function CoreCompetencyForm(props) {
             <Form.Group as={Col} xs={5} controlId="rating">
               <Form.Label>Rating</Form.Label>
               <ReactStars
+                half={false}
                 value={editSkill.rating}
                 count={5}
                 onChange={(rating) => handleEditSkillChange({ target: { id: 'rating', value: rating } })}
