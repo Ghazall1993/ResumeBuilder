@@ -54,7 +54,7 @@ export default function PersonalInfoForm(props) {
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} xs={8} controlId="linkedIn">
-            <Form.Label>LinkeIn Profile</Form.Label>
+            <Form.Label>LinkedIn Profile</Form.Label>
             <Form.Control required type="url" value={(personalInfo == null) ? "" : personalInfo.linkedIn} onChange={onInputChange} />
           </Form.Group>
         </Form.Row>

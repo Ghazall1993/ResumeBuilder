@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -8,79 +8,52 @@ import CustomModal from "../CustomModal";
 import Alert from 'react-bootstrap/Alert';
 import showDateFromTo from "helpers/dateUtils";
 
-export default function EducationForm(props) {
+export default function EducationForm({ data, onUpdate }) {
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [educations, setEducations] = useState({educationInfo:[]});
-  const [educationDetails, setEducationDetails] = useState({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: new Date(), end_date: new Date(), in_progress: false });
+  const [showEditModal, setShowEditModal] = useState(-1);
+  const [newEducation, setNewEducation] = useState({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: new Date(), end_date: new Date(), in_progress: false });
   const [editEducation, setEditEducation] = useState({});
 
-  useEffect(() => {
-    if (props.data) {
-      setEducations(props.data)
-    }
-  }, [props.data])
 
   const onHeadingChange = (event) => {
-    const newEduHead = { ...educations, heading: event.target.value }
-    setEducations(newEduHead);
-    props.onUpdate({ educations: newEduHead });
+    onUpdate({ educations: { ...data, heading: event.target.value } });
   }
 
-  const onEdValChange = (event) => {
+  const onNewEductionChange = (event) => {
     const name = event.target.id;
-    const newEducationToBeAdded = { ...educationDetails, [name]: event.target.value }
-    setEducationDetails(newEducationToBeAdded);
+    const value = event.target.value;
+    setNewEducation((prev) => ({ ...prev, [name]: value }));
   }
 
-  // function validate() {
-  //   if (!educationDetails.institution) {
-  //     return;
-  //   }
-  //   if (!educationDetails.fieldOfStudy) {
-  //     return;
-  //   }
-  //   if (!educationDetails.typeOfDegree) {
-  //     return;
-  //   }
-  //   submitNewEdInfo(educationDetails);
-  // }
-  const submitNewEdInfo = (EdInfo) => {
-    const totalEdInfo = [...educations.educationInfo, EdInfo]
-    const newtotalEdInfo = { ...educations, educationInfo: totalEdInfo };
-    setEducations(newtotalEdInfo);
-    props.onUpdate({ educations: newtotalEdInfo });
+  const saveNewEducation = () => {
+    debugger
+    const allEducations = [...data.educationInfo, newEducation]
+    onUpdate({ educations: { ...data, educationInfo: allEducations } });
     setShowAddModal(false);
-    setEducationDetails({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: '', end_date: '', checked: false });
+    setNewEducation({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: '', end_date: '', in_progress: false });
   }
-  const handleEditEduInfoChange = (event) => {
+  const onExistingEducationChange = (event) => {
     const name = event.target.id;
-    const editedEduInfo = { ...editEducation, [name]: event.target.value }
-    setEditEducation(editedEduInfo);
+    const value = event.target.value;
+    setEditEducation((prev) => ({ ...prev, [name]: value }));
   }
 
-  const submitEdittedEduInfo = (EdInfo) => {
-    const totalEdInfo = [...educations.educationInfo];
-    totalEdInfo[showEditModal - 1] = EdInfo;
-    const newTotalEdInfo = { ...educations, educationInfo: totalEdInfo };
-    setEducations(newTotalEdInfo);
-    props.onUpdate({ educations: newTotalEdInfo });
-    setShowEditModal(false);
+  const saveEdittedEducation = () => {
+    const allEducations = [...data.educationInfo];
+    allEducations[showEditModal] = editEducation;
+    onUpdate({ educations: { ...data, educationInfo: allEducations } });
+    setShowEditModal(-1);
   }
-  const deleteEdInfo = (index) => {
-    const totalEdInfo = [...educations.educationInfo];
-    totalEdInfo.splice(index, 1);
-    const remainingEducations = { ...educations, educationInfo: totalEdInfo }
-    setEducations(remainingEducations);
-    props.onUpdate({ educations: remainingEducations });
+  const deleteEducation = (index) => {
+    const allEducations = [...data.educationInfo];
+    allEducations.splice(index, 1);
+    onUpdate({ educations: { ...data, educationInfo: allEducations } });
   }
-  const checkboxHandler = () => {
-    const newEdInfo = { ...educationDetails, in_progress: !educationDetails.in_progress, end_date: "" }
-    setEducationDetails(newEdInfo);
+  const onNewInProgressChange = () => {
+    setNewEducation((prev) => ({ ...prev, in_progress: !prev.in_progress, end_date: "" }));
   }
-  const editcheckboxHandler = () => {
-    const editedEduInfo = { ...editEducation, in_progress: !editEducation.in_progress, end_date: "" };
-    setEditEducation(editedEduInfo);
+  const onExistingInProgressChange = () => {
+    setEditEducation((prev) => ({ ...prev, in_progress: !prev.in_progress, end_date: "" }));
   }
   return (
     <>
@@ -99,13 +72,13 @@ export default function EducationForm(props) {
             <Form.Label>Heading</Form.Label>
             <Form.Control type="text"
               placeholder="E.g. Educational Qualifications, Education"
-              value={(educations == null) ? "" : educations.heading}
+              value={(data == null) ? "" : data.heading}
               onChange={onHeadingChange} />
           </Form.Group>
         </Form.Row>
       </Form>
-      {(educations == null) ? "" :
-        educations.educationInfo.map((item, index) => {
+      {(data == null) ? "" :
+        data.educationInfo.map((item, index) => {
           return (
             <Card key={item.fieldOfStudy} border="primary" style={{ width: '28rem', margin: '.3rem' }}>
               <Card.Body>
@@ -122,7 +95,7 @@ export default function EducationForm(props) {
                     type="button"
                     style={{ margin: '.2rem' }}
                     onClick={() => {
-                      setShowEditModal(index + 1)
+                      setShowEditModal(index)
                       setEditEducation(item)
                     }
                     }>
@@ -132,7 +105,7 @@ export default function EducationForm(props) {
                     variant="primary"
                     type="button"
                     onClick={() =>
-                      deleteEdInfo(index)}
+                      deleteEducation(index)}
                   >
                     DELETE
                     </Button>
@@ -149,158 +122,82 @@ export default function EducationForm(props) {
         title="Add Education"
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onSubmit={() => submitNewEdInfo(educationDetails)}
+        onSubmit={saveNewEducation}
       >
-
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={12} controlId="institution">
-              <Form.Label>Institution</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={educationDetails.institution}
-                onChange={onEdValChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={12} controlId="fieldOfStudy">
-              <Form.Label>Field of Study</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={educationDetails.fieldOfStudy}
-                onChange={onEdValChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={6} controlId="typeOfDegree">
-              <Form.Label>Type of Degree</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={educationDetails.typeOfDegree}
-                onChange={onEdValChange} />
-            </Form.Group>
-            <Form.Group as={Col} xs={4} controlId="GPA">
-              <Form.Label>GPA</Form.Label>
-              <Form.Control size="md" type="text"
-                value={educationDetails.GPA}
-                onChange={onEdValChange} />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Row>
-            <Form.Group as={Col} controlId="city">
-              <Form.Label>City</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={onEdValChange}
-                value={educationDetails.city}
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId="country">
-              <Form.Label>Country</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={onEdValChange}
-                value={educationDetails.country}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Row>
-            <Form.Group as={Col} xs={6} controlId="start_date">
-              <Form.Label>Start Date</Form.Label>
-              <DatePicker className={"form-control"}
-                selected={educationDetails.start_date}
-                onChange={(start_date) => onEdValChange({ target: { id: 'start_date', value: start_date } })}
-              />
-            </Form.Group>
-            <Form.Group as={Col} xs={6} controlId="end_date">
-              <Form.Label>End Date</Form.Label>
-              <DatePicker className={"form-control"} disabled={educationDetails.in_progress} selected={educationDetails.end_date}
-                onChange={(end_date) => onEdValChange({ target: { id: 'end_date', value: end_date } })}
-              />
-            </Form.Group>
-          </Form.Row>
-          <Col xs="auto" style={{ position: 'absolute', right: '8rem', bottom: '5px' }}>
-            <Form.Check
-              type="checkbox"
-              id="autoSizingCheck"
-              className="my-1"
-              label="In Progress "
-              checked={educationDetails.in_progress}
-              onChange={checkboxHandler}
-            />
-          </Col>
-        </Form>
+        <EducationInformationForm education={newEducation} onEducationChange={onNewEductionChange} onInProgressChange={onNewInProgressChange} />
       </CustomModal>
       <CustomModal
         title="Edit Education"
-        show={!!showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={() => submitEdittedEduInfo(editEducation)}
+        show={showEditModal > -1}
+        onClose={() => setShowEditModal(-1)}
+        onSubmit={saveEdittedEducation}
       >
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={12} controlId="institution">
-              <Form.Label>Institution</Form.Label>
-              <Form.Control size="md" type="text" required placeholder="Enter Institution"
-                value={editEducation.institution}
-                onChange={handleEditEduInfoChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={12} controlId="fieldOfStudy">
-              <Form.Label>Field of Study</Form.Label>
-              <Form.Control size="md" type="text" required
-                placeholder="Enter Field of Study"
-                value={editEducation.fieldOfStudy}
-                onChange={handleEditEduInfoChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={6} controlId="typeOfDegree">
-              <Form.Label>Type of Degree</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={editEducation.typeOfDegree}
-                onChange={handleEditEduInfoChange} />
-            </Form.Group>
-            <Form.Group as={Col} xs={4} controlId="GPA">
-              <Form.Label>GPA</Form.Label>
-              <Form.Control size="md" type="text"
-                value={editEducation.GPA}
-                onChange={handleEditEduInfoChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={6} controlId="start_date">
-              <Form.Label>Start Date</Form.Label>
-              <DatePicker selected={(typeof editEducation.start_date === 'string')? new Date(editEducation.start_date):editEducation.start_date}
-                onChange={(start_date) => handleEditEduInfoChange({ target: { id: 'start_date', value: start_date } })}
-                value={(typeof editEducation.start_date === 'string')? new Date(editEducation.start_date):editEducation.start_date}
-              />
-            </Form.Group>
-            <Form.Group as={Col} xs={6} controlId="end_date">
-              <Form.Label>End Date</Form.Label>
-              <DatePicker disabled={editEducation.in_progress}
-                selected={editEducation.end_date ? new Date(editEducation.end_date):new Date()}
-                onChange={(end_date) => handleEditEduInfoChange({ target: { id: 'end_date', value: end_date } })}
-                value={editEducation.end_date ? new Date(editEducation.end_date):new Date()}
-              />
-            </Form.Group>
-            <Col xs="auto" style={{ position: 'absolute', right: '8rem', bottom: '5px' }}>
-              <Form.Check
-                type="checkbox"
-                id="autoSizingCheck"
-                className="my-1"
-                label="In Progress"
-                checked={editEducation.in_progress}
-                onChange={editcheckboxHandler}
-              />
-            </Col>
-          </Form.Row>
-        </Form>
+        <EducationInformationForm education={editEducation} onEducationChange={onExistingEducationChange} onInProgressChange={onExistingInProgressChange} />
       </CustomModal >
     </>
   );
 };
+
+function EducationInformationForm({ education, onEducationChange, onInProgressChange }) {
+  return (
+    <Form>
+      <Form.Row>
+        <Form.Group as={Col} xs={12} controlId="institution">
+          <Form.Label>Institution</Form.Label>
+          <Form.Control size="md" type="text" required placeholder="Enter Institution"
+            value={education.institution}
+            onChange={onEducationChange} />
+        </Form.Group>
+      </Form.Row>
+      <Form.Row>
+        <Form.Group as={Col} xs={12} controlId="fieldOfStudy">
+          <Form.Label>Field of Study</Form.Label>
+          <Form.Control size="md" type="text" required
+            placeholder="Enter Field of Study"
+            value={education.fieldOfStudy}
+            onChange={onEducationChange} />
+        </Form.Group>
+      </Form.Row>
+      <Form.Row>
+        <Form.Group as={Col} xs={6} controlId="typeOfDegree">
+          <Form.Label>Type of Degree</Form.Label>
+          <Form.Control size="md" type="text" required
+            value={education.typeOfDegree}
+            onChange={onEducationChange} />
+        </Form.Group>
+        <Form.Group as={Col} xs={4} controlId="GPA">
+          <Form.Label>GPA</Form.Label>
+          <Form.Control size="md" type="text"
+            value={education.GPA}
+            onChange={onEducationChange} />
+        </Form.Group>
+      </Form.Row>
+      <Form.Row>
+        <Form.Group as={Col} xs={6} controlId="start_date">
+          <Form.Label>Start Date</Form.Label>
+          <DatePicker selected={education.start_date}
+            onChange={(start_date) => onEducationChange({ target: { id: 'start_date', value: start_date } })}
+          />
+        </Form.Group>
+        <Form.Group as={Col} xs={6} controlId="end_date">
+          <Form.Label>End Date</Form.Label>
+          <DatePicker disabled={education.in_progress}
+            selected={education.end_date}
+            onChange={(end_date) => onEducationChange({ target: { id: 'end_date', value: end_date } })}
+            value={education.end_date ? new Date(education.end_date) : new Date()}
+          />
+        </Form.Group>
+        <Col xs="auto" style={{ position: 'absolute', right: '8rem', bottom: '5px' }}>
+          <Form.Check
+            type="checkbox"
+            id="autoSizingCheck"
+            className="my-1"
+            label="In Progress"
+            checked={education.in_progress}
+            onChange={onInProgressChange}
+          />
+        </Col>
+      </Form.Row>
+    </Form>
+  )
+}

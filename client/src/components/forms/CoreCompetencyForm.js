@@ -27,10 +27,9 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
     onUpdate({ core_competencies: newData });
   }
 
-  const handleNewSkillChange = (event) => {
+  const onNewSkillChange = (event) => {
     const name = event.target.id;
-    const newSkillToBeAdded = { ...newSkill, [name]: event.target.value }
-    setNewSkill(newSkillToBeAdded);
+    setNewSkill((prev)=>({ ...prev, [name]: event.target.value }));
   }
 
   const saveNewSkill = (skill) => {
@@ -41,7 +40,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
     setNewSkill({ name: "", rating: 1 })
   }
 
-  const handleEditSkillChange = (event) => {
+  const onEditSkillChange = (event) => {
     const name = event.target.id;
     const changedSkill = { ...editSkill, [name]: event.target.value }
     setEditSkill(changedSkill);
@@ -113,12 +112,9 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
         )
       }
       )}
-      
       <Button type="button" variant='primary' onClick={() => setShowAddModal(true)} size='m'>
         <span class="glyphicon glyphicon-plus" aria-hidden="true" />Add skill
       </Button>
-
-
 
       <CustomModal
         title="Add Skill"
@@ -126,32 +122,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
         onClose={() => setShowAddModal(false)}
         onSubmit={() => saveNewSkill(newSkill)}
       >
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                placeholder="Enter Skills/Expertise"
-                onChange={handleNewSkillChange}
-                value={newSkill.name}
-              />
-            </Form.Group>
-            <Form.Group as={Col} xs={5} controlId="rating">
-              <Form.Label>Rating</Form.Label>
-              <ReactStars
-                half={false}
-                count={5}
-                size={24}
-                color2={'#ffd700'}
-                onChange={(rating) => handleNewSkillChange({ target: { id: 'rating', value: rating } })}
-                value={newSkill.rating}
-              />
-            </Form.Group>
-          </Form.Row>
-        </Form>
+        <SkillForm skill={newSkill} changeHandler={onNewSkillChange} />
       </CustomModal>
 
       <CustomModal
@@ -160,29 +131,33 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
         onClose={() => setShowEditModal(-1)}
         onSubmit={() => saveEdittedSkill(editSkill)}
       >
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={editSkill.name}
-                onChange={handleEditSkillChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="rating">
-              <Form.Label>Rating</Form.Label>
-              <ReactStars
-                half={false}
-                value={editSkill.rating}
-                count={5}
-                onChange={(rating) => handleEditSkillChange({ target: { id: 'rating', value: rating } })}
-                size={24}
-                color2={'#ffd700'} />
-            </Form.Group>
-          </Form.Row>
-        </Form>
+        <SkillForm skill={editSkill} changeHandler={onEditSkillChange} />
       </CustomModal>
     </>
   );
 };
+
+function SkillForm({ skill, changeHandler }) {
+  return (
+    <Form>
+      <Form.Row>
+        <Form.Group as={Col} xs={5} controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control size="md" type="text" required
+            value={skill.name}
+            onChange={changeHandler} />
+        </Form.Group>
+        <Form.Group as={Col} xs={5} controlId="rating">
+          <Form.Label>Rating</Form.Label>
+          <ReactStars
+            half={false}
+            value={skill.rating}
+            count={5}
+            onChange={(rating) => changeHandler({ target: { id: 'rating', value: rating } })}
+            size={24}
+            color2={'#ffd700'} />
+        </Form.Group>
+      </Form.Row>
+    </Form>
+  )
+}

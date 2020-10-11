@@ -14,17 +14,13 @@ import CustomerServiceTemplate from "components/templates/customerService/Custom
 import ExperienceForm from "components/forms/ExperienceForm"
 import ReferenceForm from "components/forms/ReferenceForm"
 import Preview from "components/Preview";
+import initialResumeData from "./InitialResumeData"
 import { debounce } from "lodash";
 
 export default function ResumeBuilder(props) {
 
   const [selectedSection, setSelectedSection] = useState('personal_info');
-  const [resumeData, setResumeData] = useState({
-    core_competencies: {
-      heading: "",
-      skills: []
-    }
-  });
+  const [resumeData, setResumeData] = useState(() => initialResumeData);
   const sendData = (newData) => {
     axios.post(
       '/resume', { resumeData: newData }
