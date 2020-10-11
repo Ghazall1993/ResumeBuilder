@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -19,25 +19,32 @@ import { debounce } from "lodash";
 export default function ResumeBuilder(props) {
 
   const [selectedSection, setSelectedSection] = useState('personal_info');
-  const [resumeData, setResumeData] = useState({});
-  const sendData = (newData)=> {
+  const [resumeData, setResumeData] = useState({
+    core_competencies: {
+      heading: "",
+      skills: []
+    }
+  });
+  const sendData = (newData) => {
     axios.post(
       '/resume', { resumeData: newData }
     ).then(() => {
       console.log("Sent data seccessfully!")
     }).catch(error => console.log(error));
   }
-  const sendDataDebounced = useRef(debounce(sendData,1000)).current
+  const sendDataDebounced = useCallback(debounce(sendData, 1000), [])
+  useEffect(() => {
+    sendDataDebounced(resumeData);
+  }, [resumeData, sendDataDebounced])
+
   const resumeDataOnUpdate = (data) => {
-    const newData ={ ...resumeData, ...data }
-    setResumeData(newData);
-    sendDataDebounced(newData)
+    setResumeData((prevData) => ({ ...prevData, ...data }));
   }
 
   //Get the resume data
   useEffect(() => {
     axios.get('/resume').then(response => {
-      setResumeData(response.data[0] ? response.data[0].resumedata:{})
+      setResumeData(response.data[0] ? response.data[0].resumedata : {})
     });
   }, []);
 
@@ -54,7 +61,6 @@ export default function ResumeBuilder(props) {
     { id: "experience", title: "Experience", component: <ExperienceForm onUpdate={resumeDataOnUpdate} data={resumeData.experience} /> },
     { id: "references", title: "References", component: <ReferenceForm onUpdate={resumeDataOnUpdate} data={resumeData.references} /> }
   ]
-
   const findTitleByID = (sectionID) => {
     return (sections.find(element => element.id === sectionID)).title
   }
@@ -68,7 +74,7 @@ export default function ResumeBuilder(props) {
       <Container fluid className="non-printable">
         <Row className="rb-container vh-100 ">
           <Col className="sidebar-container col-2 vh-100">
-            <LeftSideBar items={sections} onUpdate={leftSideBarOnUpdate}/>
+            <LeftSideBar items={sections} onUpdate={leftSideBarOnUpdate} />
           </Col>
 
           <Col className="bg-white col-5 vh-100">

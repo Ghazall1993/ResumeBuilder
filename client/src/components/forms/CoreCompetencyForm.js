@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
@@ -17,22 +17,14 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
   }
 
   const [showAddModal, setShowAddModal] = useState(false);
-  // showEditModal conatins the id of the selected skill to be editted
   const [showEditModal, setShowEditModal] = useState(-1);
-  const [coreCompetencies, setCoreCompetencies] = useState({ skills: [] });
   const [newSkill, setNewSkill] = useState({ name: "", rating: 1 });
   const [editSkill, setEditSkill] = useState({});
 
-  useEffect(() => {
-    if (data) {
-      setCoreCompetencies(data)
-    }
-  }, [data])
 
   const onHeadingChange = (event) => {
-    const newCoreCompetencies = { ...coreCompetencies, heading: event.target.value }
-    setCoreCompetencies(newCoreCompetencies);
-    onUpdate({ core_competencies: newCoreCompetencies });
+    const newData = { ...data, heading: event.target.value }
+    onUpdate({ core_competencies: newData });
   }
 
   const handleNewSkillChange = (event) => {
@@ -42,10 +34,9 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
   }
 
   const saveNewSkill = (skill) => {
-    const allSkills = [...coreCompetencies.skills, skill]
-    const newCoreCompetencies = { ...coreCompetencies, skills: allSkills };
-    setCoreCompetencies(newCoreCompetencies);
-    onUpdate({ core_competencies: newCoreCompetencies });
+    const allSkills = [...data.skills, skill]
+    const newData = { ...data, skills: allSkills };
+    onUpdate({ core_competencies: newData });
     setShowAddModal(false);
     setNewSkill({ name: "", rating: 1 })
   }
@@ -57,21 +48,19 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
   }
 
   const saveEdittedSkill = (skill) => {
-    const newSkills = [...coreCompetencies.skills];
+    const newSkills = [...data.skills];
     newSkills[showEditModal] = skill;
-    const newCoreCompetencies = { ...coreCompetencies, skills: newSkills };
-    setCoreCompetencies(newCoreCompetencies);
-    onUpdate({ core_competencies: newCoreCompetencies });
+    const newData = { ...data, skills: newSkills };
+    onUpdate({ core_competencies: newData });
     setShowEditModal(-1);
   }
 
 
   const deleteSkill = (index) => {
-    const newSkills = [...coreCompetencies.skills];
+    const newSkills = [...data.skills];
     newSkills.splice(index, 1)
-    const newCoreCompetencies = { ...coreCompetencies, skills: newSkills };
-    setCoreCompetencies(newCoreCompetencies);
-    onUpdate({ core_competencies: newCoreCompetencies });
+    const newData = { ...data, skills: newSkills };
+    onUpdate({ core_competencies: newData });
   }
 
   return (
@@ -92,42 +81,44 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
             <Form.Label>Heading</Form.Label>
             <Form.Control type="text"
               placeholder="E.g. Core Competencies, Skills, Expertise"
-              value={(coreCompetencies == null) ? "" : coreCompetencies.heading}
+              value={data.heading}
               onChange={onHeadingChange} />
           </Form.Group>
         </Form.Row>
       </Form>
-      {(coreCompetencies == null) ? "" :
-        coreCompetencies.skills.map((item, index) => {
-          return (
-            <Card border="primary" style={{ width: '20rem', margin: '.5rem' }}>
-              <Card.Body>
-                <Card.Subtitle>Name:</Card.Subtitle>
-                <Card.Text>
-                  {item.name}
-                </Card.Text>
-                <Card.Subtitle>Rating:</Card.Subtitle>
-                <Card.Text>
-                  {ratingMap[item.rating]}
-                </Card.Text>
-                <div>
-                  <Button variant="primary" type="button" style={{ margin: '.2rem' }}
-                    onClick={() => {
-                      setShowEditModal(index)
-                      setEditSkill(item)
-                    }
-                    }>Edit</Button>
-                  <Button variant="primary" type="button"
-                    onClick={() => deleteSkill(index)}>Delete</Button>
-                </div>
-              </Card.Body>
-            </Card>
-          )
-        }
-        )}
+      {data.skills.map((item, index) => {
+        return (
+          <Card border="primary" style={{ width: '20rem', margin: '.5rem' }}>
+            <Card.Body>
+              <Card.Subtitle>Name:</Card.Subtitle>
+              <Card.Text>
+                {item.name}
+              </Card.Text>
+              <Card.Subtitle>Rating:</Card.Subtitle>
+              <Card.Text>
+                {ratingMap[item.rating]}
+              </Card.Text>
+              <div>
+                <Button variant="primary" type="button" style={{ margin: '.2rem' }}
+                  onClick={() => {
+                    setShowEditModal(index)
+                    setEditSkill(item)
+                  }
+                  }>Edit</Button>
+                <Button variant="primary" type="button"
+                  onClick={() => deleteSkill(index)}>Delete</Button>
+              </div>
+            </Card.Body>
+          </Card>
+        )
+      }
+      )}
+      
+      <Button type="button" variant='primary' onClick={() => setShowAddModal(true)} size='m'>
+        <span class="glyphicon glyphicon-plus" aria-hidden="true" />Add skill
+      </Button>
 
-      <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)} size='m'>+ ADD SKILL</Button>
+
 
       <CustomModal
         title="Add Skill"
