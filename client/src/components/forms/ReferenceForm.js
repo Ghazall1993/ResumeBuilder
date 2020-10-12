@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Alert from 'react-bootstrap/Alert';
@@ -6,78 +6,54 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import CustomModal from "../CustomModal";
 
-export default function ReferenceForm(props) {
+export default function ReferenceForm({ data, onUpdate }) {
+  const emtpyReference = { name: "", email: "" };
   const [showAddModal, setShowAddModal] = useState(false);
   // showEditModal contains the id of the selected skill to be editted
-  const [showEditModal, setShowEditModal] = useState();
-  const [reference, setReference] = useState({ referees: [] });
-  const [newRef, setNewRef] = useState({ name: "", email: "", req: false });
-  const [editRef, setEditRef] = useState({});
-
-  useEffect(()=>{
-    if (props.data){
-      setReference(props.data);
-    }
-  },[props.data])
+  const [showEditModal, setShowEditModal] = useState(-1);
+  const [newReference, setNewReference] = useState(emtpyReference);
+  const [editReference, setEditReference] = useState({});
 
   const onHeadingChange = (event) => {
-    const newRefHead = { ...reference, heading: event.target.value }
-    setReference(newRefHead);
-    props.onUpdate({ references: newRefHead });
+    onUpdate({ references: { ...data, heading: event.target.value } });
   }
-  const handleRefChange = (event) => {
-    const updatedVal = event.target.id;
-    const addedRef = { ...newRef, [updatedVal]: event.target.value }
-    setNewRef(addedRef);
-  }
-  const submitNewRef = (refer) => {
-    const totalReferees = [...reference.referees, refer]
-    const newTotalReferees = { ...reference, referees: totalReferees };
-    setReference(newTotalReferees);
-    props.onUpdate({ references: newTotalReferees });
-    setShowAddModal(false);
-    setNewRef({ name: "", email: '' });
-  }
-  const handleEditRefChange = (event) => {
+
+  const onReferenceChange = (event) => {
     const name = event.target.id;
-    const editedRef = { ...editRef, [name]: event.target.value }
-    setEditRef(editedRef);
+    const value = event.target.value;
+    setNewReference((prev) => ({ ...prev, [name]: value }));
+  }
+  const saveNewReference = () => {
+    const allReferees = [...data.referees, newReference]
+    onUpdate({ references: { ...data, referees: allReferees } });
+    setShowAddModal(false);
+    setNewReference(emtpyReference);
   }
 
-
-
-  const handleCheckboxNewRef = () => {
-    const newRefToBeAdded = { ...newRef, req: !newRef.req, name: "", email: "" }
-    setNewRef(newRefToBeAdded);
+  const onExistingReferenceChange = (event) => {
+    const name = event.target.id;
+    const value = event.target.value;
+    setEditReference((prev) => ({ ...prev, [name]: value }));
   }
 
-  const handleCheckboxEditRef = () => {
-    const edittedRefToBeAdded = { ...editRef, req: !editRef.req, name: "", email: "" }
-    setEditRef(edittedRefToBeAdded);
+  const saveEdittedReference = () => {
+    const allReferences = [...data.referees];
+    allReferences[showEditModal] = editReference;
+    onUpdate({ references: { ...data, referees: allReferences } });
+    setShowEditModal(-1);
   }
 
-
-  const submitEdittedRef = (refer) => {
-    const totalReferees = [...reference.referees];
-    totalReferees[showEditModal - 1] = refer;
-    const newTotalReferees = { ...reference, referees: totalReferees };
-    setReference(newTotalReferees);
-    props.onUpdate({ references: newTotalReferees });
-    setShowEditModal(false);
+  const deleteReference = (index) => {
+    const allReferences = [...data.referees];
+    allReferences.splice(index, 1);
+    onUpdate({ references: { ...data, referees: allReferences } });
   }
 
-  const deleteReferee = (index) => {
-    const totalReferees = [...reference.referees];
-    totalReferees.splice(index, 1);
-    const newtotalReferees = { ...reference, referees: totalReferees };
-    setReference(newtotalReferees);
-    props.onUpdate({ references: newtotalReferees });
-  }
 
   return (
     <>
       <Alert variant="primary">
-        <Alert.Heading>Create a Reference List!</Alert.Heading>
+        <Alert.Heading>Create a reference List!</Alert.Heading>
         <p>
           Many potential employers ask for a list of references in a job application or at the end of a job interview.
           That’s why it’s a good idea to have a list of references handy when you’re applying for a new job.
@@ -90,13 +66,13 @@ export default function ReferenceForm(props) {
             <Form.Label>Heading</Form.Label>
             <Form.Control type="text"
               placeholder="E.g. References"
-              value={(reference == null) ? "" : reference.heading}
+              value={data.heading}
               onChange={onHeadingChange} />
           </Form.Group>
         </Form.Row>
       </Form>
-      { (reference == null) ? null :
-        reference.referees.map((item, index) => {
+      {
+        data.referees.map((item, index) => {
           if (!item.name || !item.email) {
             return (
               <Card border="primary" style={{ width: '20rem', margin: '.5rem' }}>
@@ -108,12 +84,12 @@ export default function ReferenceForm(props) {
                   <div className="mt-3">
                     <Button variant="primary" type="button" style={{ margin: '.2rem' }}
                       onClick={() => {
-                        setShowEditModal(index + 1)
-                        setEditRef(item)
+                        setShowEditModal(index)
+                        setEditReference(item)
                       }
                       }>Edit</Button>
                     <Button variant="primary" type="button"
-                      onClick={() => deleteReferee(index)}>Delete</Button>
+                      onClick={() => deleteReference(index)}>Delete</Button>
                   </div>
                 </Card.Body>
               </Card>
@@ -133,12 +109,12 @@ export default function ReferenceForm(props) {
                   <div>
                     <Button variant="primary" type="button" style={{ margin: '.2rem' }}
                       onClick={() => {
-                        setShowEditModal(index + 1)
-                        setEditRef(item)
+                        setShowEditModal(index)
+                        setEditReference(item)
                       }
                       }>Edit</Button>
                     <Button variant="primary" type="button"
-                      onClick={() => deleteReferee(index)}>Delete</Button>
+                      onClick={() => deleteReference(index)}>Delete</Button>
                   </div>
                 </Card.Body>
               </Card>
@@ -152,81 +128,49 @@ export default function ReferenceForm(props) {
         title="Add Reference"
         show={showAddModal}
         onClose={() => setShowAddModal(false)}
-        onSubmit={() => submitNewRef(newRef)}
+        onSubmit={saveNewReference}
       >
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={handleRefChange}
-                value={newRef.name}
-                disabled={newRef.req}
-              />
-            </Form.Group>
-            <Form.Group as={Col} xs={5} controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                size="md"
-                type="email"
-                required
-                onChange={handleRefChange}
-                value={newRef.email}
-                disabled={newRef.req}
-              />
-            </Form.Group>
-          </Form.Row>
-          <Form.Group className="align-self-end" id="checkbox" controlId="present">
-            <Form.Check
-              type="checkbox"
-              id="autoSizingCheck"
-              className="my-1"
-              label="Available upon request"
-              checked={newRef.req}
-              onChange={handleCheckboxNewRef}
-            />
-          </Form.Group>
-        </Form>
+        <ReferenceInformationForm reference={newReference} onReferenceChange={onReferenceChange} />
       </CustomModal>
       <CustomModal
         title="Edit Referee"
-        show={showEditModal}
-        onClose={() => setShowEditModal(false)}
-        onSubmit={() => submitEdittedRef(editRef)}
+        show={showEditModal > -1}
+        onClose={() => setShowEditModal(-1)}
+        onSubmit={saveEdittedReference}
       >
-        <Form>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="name">
-              <Form.Label>Name</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={editRef.name}
-                onChange={handleEditRefChange}
-              />
-            </Form.Group>
-          </Form.Row>
-          <Form.Row>
-            <Form.Group as={Col} xs={5} controlId="email">
-              <Form.Label>Email</Form.Label>
-              <Form.Control size="md" type="text" required
-                value={editRef.email}
-                onChange={handleEditRefChange} />
-            </Form.Group>
-          </Form.Row>
-          <Form.Group className="align-self-end" id="checkbox" controlId="present">
-            <Form.Check
-              type="checkbox"
-              id="autoSizingCheck"
-              className="my-1"
-              label="Available upon request"
-              checked={editRef.req}
-              onChange={handleCheckboxEditRef}
-            />
-          </Form.Group>
-        </Form>
+        <ReferenceInformationForm reference={editReference} onReferenceChange={onExistingReferenceChange} />
       </CustomModal>
     </>
   );
 };
+
+function ReferenceInformationForm({ reference, onReferenceChange }) {
+  return (
+    <Form>
+      <Form.Row>
+        <Form.Group as={Col} xs={5} controlId="name">
+          <Form.Label>Name</Form.Label>
+          <Form.Control
+            size="md"
+            type="text"
+            required
+            onChange={onReferenceChange}
+            value={reference.name}
+            disabled={reference.req}
+          />
+        </Form.Group>
+        <Form.Group as={Col} xs={5} controlId="email">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            size="md"
+            type="email"
+            required
+            onChange={onReferenceChange}
+            value={reference.email}
+            disabled={reference.req}
+          />
+        </Form.Group>
+      </Form.Row>
+    </Form>
+  )
+}
