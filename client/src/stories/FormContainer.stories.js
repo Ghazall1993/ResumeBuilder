@@ -3,7 +3,7 @@ import React from 'react';
 import FormContainer from "../components/FormContainer";
 import { action } from '@storybook/addon-actions';
 import SummaryForm from "../components/forms/SummaryForm";
-import PersonalInfoForm from "../components/forms/PersonalInfoForm";
+import PersonalInformationForm from "../components/forms/PersonalInformationForm";
 import EducationForm from "../components/forms/EducationForm";
 import CoreCompetencyForm from "../components/forms/CoreCompetencyForm";
 import ReferenceForm from "../components/forms/ReferenceForm";
@@ -18,7 +18,7 @@ export const SummaryInContainer = () =>
   </FormContainer>
 export const PersonalInfoInContainer = () =>
   <FormContainer title="Personal Information" >
-    <PersonalInfoForm data={{
+    <PersonalInformationForm data={{
       firstName: "",
       lastName: "",
       profTitle: "",

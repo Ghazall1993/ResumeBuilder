@@ -7,7 +7,7 @@ import SummaryForm from "components/forms/SummaryForm";
 import axios from "axios";
 import LeftSideBar from "components/LeftSidebar/LeftSidebar";
 import './ResumeBuilder.css';
-import PersonalInfoForm from "components/forms/PersonalInfoForm";
+import PersonalInformationForm from "components/forms/PersonalInformationForm";
 import CoreCompetencyForm from "components/forms/CoreCompetencyForm";
 import EducationForm from "components/forms/EducationForm"
 import CustomerServiceTemplate from "components/templates/customerService/CustomerServiceTemplate"
@@ -50,7 +50,7 @@ export default function ResumeBuilder(props) {
 
 
   const sections = [
-    { id: "personal_info", title: "Personal Information", component: <PersonalInfoForm onUpdate={resumeDataOnUpdate} data={resumeData.personal_info} /> },
+    { id: "personal_info", title: "Personal Information", component: <PersonalInformationForm onUpdate={resumeDataOnUpdate} data={resumeData.personal_info} /> },
     { id: "summary", title: "Summary", component: <SummaryForm onUpdate={resumeDataOnUpdate} data={resumeData.summary} /> },
     { id: "educations", title: "Education", component: <EducationForm onUpdate={resumeDataOnUpdate} data={resumeData.educations} /> },
     { id: "core_competencies", title: "Core Competencies", component: <CoreCompetencyForm onUpdate={resumeDataOnUpdate} data={resumeData.core_competencies} /> },

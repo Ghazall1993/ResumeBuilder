@@ -1,14 +1,14 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
-import PersonalInfoForm from '../components/forms/PersonalInfoForm.js';
+import PersonalInformationForm from '../components/forms/PersonalInformationForm.js';
 
 export default {
   title: 'PersonalInfo',
-  component: PersonalInfoForm,
+  component: PersonalInformationForm,
 };
 
-export const PersonalInfo = () => <PersonalInfoForm onUpdate={action('Update Received')} />;
-export const setPersonalInfo = () => <PersonalInfoForm onUpdate={action('Update Received')} data={{
+export const PersonalInfo = () => <PersonalInformationForm onUpdate={action('Update Received')} />;
+export const setPersonalInfo = () => <PersonalInformationForm onUpdate={action('Update Received')} data={{
   first_name: "Arpita",
   last_name: "Deb",
   prof_title: "Junior Developer",
