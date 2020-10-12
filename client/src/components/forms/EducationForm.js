@@ -9,9 +9,18 @@ import Alert from 'react-bootstrap/Alert';
 import showDateFromTo from "helpers/dateUtils";
 
 export default function EducationForm({ data, onUpdate }) {
+  const emptyEducation = {
+    institution: '',
+    fieldOfStudy: '',
+    typeOfDegree: '',
+    GPA: '',
+    start_date: new Date(),
+    end_date: new Date(),
+    in_progress: false
+  }
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(-1);
-  const [newEducation, setNewEducation] = useState({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: new Date(), end_date: new Date(), in_progress: false });
+  const [newEducation, setNewEducation] = useState(emptyEducation);
   const [editEducation, setEditEducation] = useState({});
 
 
@@ -26,11 +35,10 @@ export default function EducationForm({ data, onUpdate }) {
   }
 
   const saveNewEducation = () => {
-    debugger
     const allEducations = [...data.educationInfo, newEducation]
     onUpdate({ educations: { ...data, educationInfo: allEducations } });
     setShowAddModal(false);
-    setNewEducation({ institution: '', fieldOfStudy: '', typeOfDegree: '', GPA: '', start_date: '', end_date: '', in_progress: false });
+    setNewEducation(emptyEducation);
   }
   const onExistingEducationChange = (event) => {
     const name = event.target.id;

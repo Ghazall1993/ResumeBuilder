@@ -11,7 +11,7 @@ import { Item, StagingItem } from "helpers/reactListInputHelper"
 import showDateFromTo from "helpers/dateUtils";
 
 
-export default function ExperienceForm(props) {
+export default function ExperienceForm({ data, onUpdate }) {
   const emptyExperience = {
     employer_name: "",
     employer_description: "",
@@ -27,70 +27,53 @@ export default function ExperienceForm(props) {
 
   const [showAddModal, setShowAddModal] = useState(false);
   // showEditModal conatins the id of the selected experience to be editted
-  const [showEditModal, setShowEditModal] = useState();
-
-  const [experienceData, setExperienceData] = useState({ heading:'',experiences: [] });
+  const [showEditModal, setShowEditModal] = useState(-1);
   const [newExperience, setNewExperience] = useState(emptyExperience);
   const [editExperience, setEditExperience] = useState({});
 
-  useEffect(() => {
-    if (props.data) {
-      setExperienceData(props.data)
-    }
-  }, [props.data])
 
   const onHeadingChange = (event) => {
-    const newExperiece = { ...experienceData, heading: event.target.value }
-    setExperienceData(newExperiece);
-    props.onUpdate({ experience: newExperiece });
+    onUpdate({ experience: { ...data, heading: event.target.value } });
   }
 
-  const saveNewExperience = (ex) => {
-    const allExperiences = [...experienceData.experiences, ex];
-    const newExperiences = { ...experienceData, experiences: allExperiences };
-    setExperienceData(newExperiences);
-    props.onUpdate({ experience: newExperiences });
+  const saveNewExperience = () => {
+    const allExperiences = [...data.experiences, newExperience];
+    onUpdate({ experience: { ...data, experiences: allExperiences } });
     setShowAddModal(false);
     setNewExperience(emptyExperience);
   }
 
-  const handleNewExperienceChange = (event) => {
+  const onNewExperienceChange = (event) => {
     const name = event.target.id;
-    const newExperienceToBeAdded = { ...newExperience, [name]: event.target.value }
-    setNewExperience(newExperienceToBeAdded);
+    const value = event.target.value;
+    setNewExperience((prev) => ({ ...prev, [name]: value }));
   }
 
   const deleteExperience = (index) => {
-    const newExperiences = [...experienceData.experiences];
-    newExperiences.splice(index, 1)
-    const newExperienceData = { ...experienceData, experiences: newExperiences };
-    setExperienceData(newExperienceData);
-    props.onUpdate({ experience: newExperienceData });
+    const allExperiences = [...data.experiences];
+    allExperiences.splice(index, 1)
+    onUpdate({ experience: { ...data, experiences: allExperiences } });
   }
 
   const handleEditExperienceChange = (event) => {
     const name = event.target.id;
-    const changedExperience = { ...editExperience, [name]: event.target.value }
-    setEditExperience(changedExperience);
+    const value = event.target.value;
+    setEditExperience((prev) => ({ ...prev, [name]: value }));
   }
 
-  const handleCheckboxNewExperience = () => {
-    const newExperienceToBeAdded = { ...newExperience, present: !newExperience.present, end_date: "" }
-    setNewExperience(newExperienceToBeAdded);
+  const onNewInProgressChange = () => {
+    setNewExperience((prev) => ({ ...prev, present: !newExperience.present, end_date: "" }));
   }
 
-  const handleCheckboxEditExperience = () => {
-    const edittedExperienceToBeAdded = { ...editExperience, present: !editExperience.present, end_date: "" }
-    setEditExperience(edittedExperienceToBeAdded);
+  const onExistingInProgressChange = () => {
+    setEditExperience((prev) => ({ ...prev, present: !editExperience.present, end_date: "" }));
   }
 
-  const saveEdittedExperience = (ex) => {
-    const newExperiences = [...experienceData.experiences];
-    newExperiences[showEditModal - 1] = ex;
-    const newExperienceData = { ...experienceData, experiences: newExperiences };
-    setExperienceData(newExperienceData);
-    props.onUpdate({ experience: newExperienceData });
-    setShowEditModal(false);
+  const saveEdittedExperience = () => {
+    const allExperiences = [...data.experiences];
+    allExperiences[showEditModal] = editExperience;
+    onUpdate({ experience: { ...data, experiences: allExperiences } });
+    setShowEditModal(-1);
   }
 
   return (
@@ -109,15 +92,15 @@ export default function ExperienceForm(props) {
             <Form.Label>Heading</Form.Label>
             <Form.Control type="text"
               placeholder="E.g. Experience, Work Experience"
-              value={experienceData.heading}
+              value={data.heading}
               onChange={onHeadingChange} />
           </Form.Group>
         </Form.Row>
       </Form>
 
 
-      {(experienceData == null) ? "" :
-        (experienceData.experiences || []).map((item, index) => {
+      {(data == null) ? "" :
+        (data.experiences || []).map((item, index) => {
           return (
             <Card key={item.description} border="primary" style={{ width: '28rem', margin: '.3rem' }}>
               <Card.Body>
@@ -131,7 +114,7 @@ export default function ExperienceForm(props) {
                 <div>
                   <Button variant="primary" type="button" style={{ margin: '.2rem' }}
                     onClick={() => {
-                      setShowEditModal(index + 1)
+                      setShowEditModal(index)
                       setEditExperience(item)
                     }
                     }>Edit</Button>
@@ -154,245 +137,134 @@ export default function ExperienceForm(props) {
         onClose={() => setShowAddModal(false)}
         onSubmit={() => saveNewExperience(newExperience)}
       >
-
-        <Form>
-          <Form.Group controlId="employer_name">
-            <Form.Label>Employer Name</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleNewExperienceChange}
-              value={newExperience.employer_name}
-            />
-          </Form.Group>
-
-
-          <Form.Group controlId="employer_description">
-            <Form.Label>Employer Description</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleNewExperienceChange}
-              value={newExperience.employer_description}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="job_title">
-            <Form.Label>Job Title</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleNewExperienceChange}
-              value={newExperience.job_title}
-            />
-          </Form.Group>
-
-          <Form.Row>
-            <Form.Group as={Col} controlId="start_date">
-              <Form.Label>Start Date</Form.Label>
-              <DatePicker className="form-control" selected={newExperience.start_date}
-                onChange={(start_date) => handleNewExperienceChange({ target: { id: 'start_date', value: start_date } })}
-              />
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="end_date">
-              <Form.Label>End Date</Form.Label>
-              <DatePicker className="form-control" disabled={newExperience.present} selected={newExperience.end_date}
-                onChange={(end_date) => handleNewExperienceChange({ target: { id: 'end_date', value: end_date } })}
-              />
-            </Form.Group>
-
-            <Form.Group className="align-self-end" id="checkbox" controlId="present">
-              <Form.Check
-                type="checkbox"
-                label="Present"
-                onChange={handleCheckboxNewExperience}
-                value={newExperience.present}
-              />
-            </Form.Group>
-
-          </Form.Row>
-
-
-          <Form.Row>
-            <Form.Group as={Col} controlId="city">
-              <Form.Label>City</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={handleNewExperienceChange}
-                value={newExperience.city}
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId="country">
-              <Form.Label>Country</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={handleNewExperienceChange}
-                value={newExperience.country}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>Responsibilities</Form.Label>
-            <ReactListInput
-              placeholder="Enter all your responsibilities"
-              initialStagingValue=''
-              onChange={(res) => handleNewExperienceChange({ target: { id: 'responsibilities', value: res } })}
-              maxItems={5}
-              ItemComponent={Item}
-              StagingComponent={StagingItem}
-              value={newExperience.responsibilities || []}
-            />
-          </Form.Group>
-
-          <hr className="mt-4 mb-4" />
-
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>Achievements</Form.Label>
-            <ReactListInput
-              initialStagingValue=''
-              onChange={(res) => handleNewExperienceChange({ target: { id: 'achievements', value: res } })}
-              maxItems={5}
-              ItemComponent={Item}
-              StagingComponent={StagingItem}
-              value={newExperience.achievements || []}
-            />
-          </Form.Group>
-
-        </Form>
+        <ExperienceInformationForm experience={newExperience} onExperienceChange={onNewExperienceChange} onInProgressChange={onNewInProgressChange} />
       </CustomModal>
-
-
 
       <CustomModal
         title="Edit Experience"
-        show={!!showEditModal}
-        onClose={() => setShowEditModal(false)}
+        show={showEditModal > -1}
+        onClose={() => setShowEditModal(-1)}
         onSubmit={() => saveEdittedExperience(editExperience)}
       >
-
-        <Form>
-          <Form.Group controlId="employer_name">
-            <Form.Label>Employer Name</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleEditExperienceChange}
-              value={editExperience.employer_name}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="employer_description">
-            <Form.Label>Employer Description</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleEditExperienceChange}
-              value={editExperience.employer_description}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="job_title">
-            <Form.Label>Job Title</Form.Label>
-            <Form.Control
-              size="md"
-              type="text"
-              required
-              onChange={handleEditExperienceChange}
-              value={editExperience.job_title}
-            />
-          </Form.Group>
-
-          <Form.Row>
-            <Form.Group as={Col} controlId="start_date">
-              <Form.Label>Start Date</Form.Label>
-              <DatePicker className="form-control" 
-              // selected={new Date(editExperience.start_date)}
-              selected={(typeof editExperience.start_date === 'string')? new Date(editExperience.start_date):editExperience.start_date}
-                onChange={(start_date) => handleEditExperienceChange({ target: { id: 'start_date', value: start_date } })}
-                value={new Date(editExperience.start_date)}
-              />
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="end_date">
-              <Form.Label>End Date</Form.Label>
-              <DatePicker className="form-control" disabled={editExperience.present} 
-              selected={editExperience.end_date ? new Date(editExperience.end_date):new Date()}
-                onChange={(end_date) => handleEditExperienceChange({ target: { id: 'end_date', value: end_date } })}
-                value={new Date(editExperience.end_date)}
-              />
-            </Form.Group>
-
-            <Form.Group className="align-self-end" id="checkbox" controlId="present">
-              <Form.Check type="checkbox"
-                label="Present"
-                onChange={handleCheckboxEditExperience}
-                value={editExperience.present}
-                defaultChecked={editExperience.present}
-              />
-            </Form.Group>
-
-          </Form.Row>
-
-          <Form.Row>
-            <Form.Group as={Col} controlId="city">
-              <Form.Label>City</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required={true}
-                onChange={handleEditExperienceChange}
-                value={editExperience.city}
-              />
-            </Form.Group>
-            <Form.Group as={Col} controlId="country">
-              <Form.Label>Country</Form.Label>
-              <Form.Control
-                size="md"
-                type="text"
-                required
-                onChange={handleEditExperienceChange}
-                value={editExperience.country}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>Responsibilities</Form.Label>
-            <ReactListInput
-              initialStagingValue=''
-              onChange={(res) => handleEditExperienceChange({ target: { id: 'responsibilities', value: res } })}
-              maxItems={5}
-              ItemComponent={Item}
-              StagingComponent={StagingItem}
-              value={editExperience.responsibilities || []}
-            />
-          </Form.Group>
-
-          <hr className="mt-4 mb-4" />
-
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>Achievements</Form.Label>
-            <ReactListInput
-              initialStagingValue=''
-              onChange={(res) => handleEditExperienceChange({ target: { id: 'achievements', value: res } })}
-              maxItems={5}
-              ItemComponent={Item}
-              StagingComponent={StagingItem}
-              value={editExperience.achievements || []}
-            />
-          </Form.Group>
-        </Form>
+        <ExperienceInformationForm experience={editExperience} onExperienceChange={handleEditExperienceChange} onInProgressChange={onExistingInProgressChange} />
       </CustomModal>
     </>)
+}
+
+
+function ExperienceInformationForm({ experience, onExperienceChange, onInProgressChange }) {
+  return (
+    <Form>
+      <Form.Group controlId="employer_name">
+        <Form.Label>Employer Name</Form.Label>
+        <Form.Control
+          size="md"
+          type="text"
+          required
+          onChange={onExperienceChange}
+          value={experience.employer_name}
+        />
+      </Form.Group>
+
+      <Form.Group controlId="employer_description">
+        <Form.Label>Employer Description</Form.Label>
+        <Form.Control
+          size="md"
+          type="text"
+          required
+          onChange={onExperienceChange}
+          value={experience.employer_description}
+        />
+      </Form.Group>
+
+      <Form.Group controlId="job_title">
+        <Form.Label>Job Title</Form.Label>
+        <Form.Control
+          size="md"
+          type="text"
+          required
+          onChange={onExperienceChange}
+          value={experience.job_title}
+        />
+      </Form.Group>
+
+      <Form.Row>
+        <Form.Group as={Col} controlId="start_date">
+          <Form.Label>Start Date</Form.Label>
+          <DatePicker className="form-control"
+            selected={experience.start_date}
+            onChange={(start_date) => onExperienceChange({ target: { id: 'start_date', value: start_date } })}
+          />
+        </Form.Group>
+
+        <Form.Group as={Col} controlId="end_date">
+          <Form.Label>End Date</Form.Label>
+          <DatePicker className="form-control" disabled={experience.present}
+            selected={experience.end_date}
+            onChange={(end_date) => onExperienceChange({ target: { id: 'end_date', value: end_date } })}
+          />
+        </Form.Group>
+
+        <Form.Group className="align-self-end" id="checkbox" controlId="present">
+          <Form.Check type="checkbox"
+            label="Present"
+            onChange={onInProgressChange}
+            value={experience.present}
+            defaultChecked={experience.present}
+          />
+        </Form.Group>
+
+      </Form.Row>
+
+      <Form.Row>
+        <Form.Group as={Col} controlId="city">
+          <Form.Label>City</Form.Label>
+          <Form.Control
+            size="md"
+            type="text"
+            required={true}
+            onChange={onExperienceChange}
+            value={experience.city}
+          />
+        </Form.Group>
+        <Form.Group as={Col} controlId="country">
+          <Form.Label>Country</Form.Label>
+          <Form.Control
+            size="md"
+            type="text"
+            required
+            onChange={onExperienceChange}
+            value={experience.country}
+          />
+        </Form.Group>
+      </Form.Row>
+
+      <Form.Group controlId="exampleForm.ControlTextarea1">
+        <Form.Label>Responsibilities</Form.Label>
+        <ReactListInput
+          initialStagingValue=''
+          onChange={(res) => onExperienceChange({ target: { id: 'responsibilities', value: res } })}
+          maxItems={5}
+          ItemComponent={Item}
+          StagingComponent={StagingItem}
+          value={experience.responsibilities || []}
+        />
+      </Form.Group>
+
+      <hr className="mt-4 mb-4" />
+
+      <Form.Group controlId="exampleForm.ControlTextarea1">
+        <Form.Label>Achievements</Form.Label>
+        <ReactListInput
+          initialStagingValue=''
+          onChange={(res) => onExperienceChange({ target: { id: 'achievements', value: res } })}
+          maxItems={5}
+          ItemComponent={Item}
+          StagingComponent={StagingItem}
+          value={experience.achievements || []}
+        />
+      </Form.Group>
+    </Form>
+
+  )
 }
