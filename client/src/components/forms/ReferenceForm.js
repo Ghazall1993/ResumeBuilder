@@ -88,7 +88,7 @@ export default function ReferenceForm({ data, onUpdate }) {
                         setEditReference(item)
                       }
                       }>Edit</Button>
-                    <Button variant="primary" type="button"
+                    <Button variant="danger" type="button"
                       onClick={() => deleteReference(index)}>Delete</Button>
                   </div>
                 </Card.Body>
@@ -113,7 +113,7 @@ export default function ReferenceForm({ data, onUpdate }) {
                         setEditReference(item)
                       }
                       }>Edit</Button>
-                    <Button variant="primary" type="button"
+                    <Button variant="danger" type="button"
                       onClick={() => deleteReference(index)}>Delete</Button>
                   </div>
                 </Card.Body>
@@ -123,7 +123,7 @@ export default function ReferenceForm({ data, onUpdate }) {
         })
       }
       <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)} size='m'>+ ADD REFERENCE</Button>
+        onClick={() => setShowAddModal(true)} size='m'>+ Add Reference</Button>
       <CustomModal
         title="Add Reference"
         show={showAddModal}

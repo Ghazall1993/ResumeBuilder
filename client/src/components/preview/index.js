@@ -5,21 +5,41 @@ import "./preview.css"
 import fileDownload from 'js-file-download';
 import { Upload } from "./Upload";
 
-export default function Preview(props) {
+export default function Preview({ onUpdate, data }) {
 
   const [showUpload, setShowUpload] = useState(false);
   const [showMenu, setShowMenu] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
 
-  const showImportBtn = () => Object.keys(props.data).length === 0
+  const showImportBtn = () => Object.keys(data).length === 0
 
   const exportJSON = useCallback(() => {
-    fileDownload(JSON.stringify(props.data), 'resume.json');
-  }, [props.data])
+    fileDownload(JSON.stringify(data), 'resume.json');
+  }, [data])
   const onFileImported = (data) => {
     setShowMenu(true);
     setShowUpload(false)
-    props.onUpdate(JSON.parse(data))  }
+    const importedData = JSON.parse(data)
+
+    if (importedData.educations && importedData.educations.educationInfo) {
+      convertDates(importedData.educations.educationInfo)
+    }
+
+    if (importedData.experience && importedData.experience.experiences) {
+      convertDates(importedData.experience.experiences)
+    }
+    onUpdate(importedData)
+  }
+  function convertDates(items) {
+    for (const item of items) {
+      if (item.start_date!==""){
+        item.start_date = new Date(item.start_date)
+      }
+      if (item.end_date!==""){
+        item.end_date = new Date(item.end_date)
+      }
+    }
+  }
 
   const handleClose = (e) => {
     e.target.style.display = 'none';
@@ -61,7 +81,7 @@ export default function Preview(props) {
           </Button>
                 <Button
                   variant="light"
-                  onClick={() => { setShowMenu(false); setShowUpload(true)}}
+                  onClick={() => { setShowMenu(false); setShowUpload(true) }}
                 >
                   Import JSON
             </Button>
@@ -75,11 +95,11 @@ export default function Preview(props) {
             <Button variant="secondary" onClick={handleClose}>
               Close
           </Button>
-            <CustomerServiceTemplate data={props.data} />
+            <CustomerServiceTemplate data={data} />
           </div>
         }
         <div >
-          {showUpload ? <Upload onFileImported={onFileImported} /> : <CustomerServiceTemplate data={props.data} />}
+          {showUpload ? <Upload onFileImported={onFileImported} /> : <CustomerServiceTemplate data={data} />}
         </div>
       </div >
     </>

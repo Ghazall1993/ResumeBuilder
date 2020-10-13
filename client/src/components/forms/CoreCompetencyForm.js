@@ -8,13 +8,6 @@ import CustomModal from "components/CustomModal";
 import ReactStars from 'react-stars'
 
 export default function CoreCompetencyForm({ data, onUpdate }) {
-  const ratingMap = {
-    1: "Beginner",
-    2: "Basic",
-    3: "Intermediate",
-    4: "Advanced",
-    5: "Expert"
-  }
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(-1);
@@ -29,7 +22,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
 
   const onNewSkillChange = (event) => {
     const name = event.target.id;
-    setNewSkill((prev)=>({ ...prev, [name]: event.target.value }));
+    setNewSkill((prev) => ({ ...prev, [name]: event.target.value }));
   }
 
   const saveNewSkill = (skill) => {
@@ -59,6 +52,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
     const newSkills = [...data.skills];
     newSkills.splice(index, 1)
     const newData = { ...data, skills: newSkills };
+    setShowEditModal(-1)
     onUpdate({ core_competencies: newData });
   }
 
@@ -85,37 +79,32 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
           </Form.Group>
         </Form.Row>
       </Form>
+      <Form.Label>Skills</Form.Label>
       {data.skills.map((item, index) => {
         return (
-          <Card border="primary" style={{ width: '20rem', margin: '.5rem' }}>
+          <Card className="active-shadow" style={{ width: '20rem', margin: '.5rem' }} onClick={() => {
+            setShowEditModal(index)
+            setEditSkill(item)
+          }}>
             <Card.Body>
-              <Card.Subtitle>Name:</Card.Subtitle>
-              <Card.Text>
-                {item.name}
-              </Card.Text>
-              <Card.Subtitle>Rating:</Card.Subtitle>
-              <Card.Text>
-                {ratingMap[item.rating]}
-              </Card.Text>
-              <div>
-                <Button variant="primary" type="button" style={{ margin: '.2rem' }}
-                  onClick={() => {
-                    setShowEditModal(index)
-                    setEditSkill(item)
-                  }
-                  }>Edit</Button>
-                <Button variant="primary" type="button"
-                  onClick={() => deleteSkill(index)}>Delete</Button>
-              </div>
+              <Card.Subtitle>{item.name}</Card.Subtitle>
+              <ReactStars
+                half={false}
+                value={item.rating}
+                count={5}
+                size={24}
+                color2={'#ffd700'}
+                edit={false} />
             </Card.Body>
           </Card>
         )
       }
       )}
-      <Button type="button" variant='primary' onClick={() => setShowAddModal(true)} size='m'>
-        <span class="glyphicon glyphicon-plus" aria-hidden="true" />Add skill
-      </Button>
-
+      <div className="mb-3">
+        <Button type="button" variant='primary' onClick={() => setShowAddModal(true)} size='m'>
+          + Add Skill
+        </Button>
+      </div>
       <CustomModal
         title="Add Skill"
         show={showAddModal}
@@ -130,6 +119,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
         show={showEditModal > -1}
         onClose={() => setShowEditModal(-1)}
         onSubmit={() => saveEdittedSkill(editSkill)}
+        onDelete={() => deleteSkill(showEditModal)}
       >
         <SkillForm skill={editSkill} changeHandler={onEditSkillChange} />
       </CustomModal>

@@ -118,7 +118,7 @@ export default function ExperienceForm({ data, onUpdate }) {
                       setEditExperience(item)
                     }
                     }>Edit</Button>
-                  <Button variant="primary" type="button"
+                  <Button variant="danger" type="button"
                     onClick={() => deleteExperience(index)}>Delete</Button>
                 </div>
               </Card.Body>
@@ -129,7 +129,7 @@ export default function ExperienceForm({ data, onUpdate }) {
 
 
       <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)} size='m'>+ ADD EXPERIENCE</Button>
+        onClick={() => setShowAddModal(true)} size='m'>+ Add Experience</Button>
 
       <CustomModal
         title="Add Experience"

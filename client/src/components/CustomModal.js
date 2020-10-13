@@ -14,8 +14,9 @@ export default function CustomModal(props) {
           {props.children}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => props.onClose()}>Cancel</Button>
-          <Button variant="primary" type="submit" onClick={() => props.onSubmit()}>Save</Button>
+          {props.onDelete && <Button variant="danger mr-auto" onClick={props.onDelete}>Delete</Button>}
+          <Button variant="secondary" onClick={props.onClose}>Cancel</Button>
+          <Button variant="primary" type="submit" onClick={props.onSubmit}>Save</Button>
         </Modal.Footer>
       </Modal>
     </div >

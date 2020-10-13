@@ -107,15 +107,15 @@ export default function EducationForm({ data, onUpdate }) {
                       setEditEducation(item)
                     }
                     }>
-                    EDIT
+                    Edit
                   </Button>
                   <Button
-                    variant="primary"
+                    variant="danger"
                     type="button"
                     onClick={() =>
                       deleteEducation(index)}
                   >
-                    DELETE
+                    Delete
                     </Button>
                 </div>
               </Card.Body>
@@ -125,7 +125,7 @@ export default function EducationForm({ data, onUpdate }) {
         )}
       <Button type="button" variant='primary'
         onClick={() => setShowAddModal(true)}
-        size='md'>+ ADD Education</Button>
+        size='md'>+ Add Education</Button>
       <CustomModal
         title="Add Education"
         show={showAddModal}
