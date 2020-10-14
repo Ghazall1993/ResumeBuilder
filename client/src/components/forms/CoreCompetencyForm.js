@@ -22,7 +22,8 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
 
   const onNewSkillChange = (event) => {
     const name = event.target.id;
-    setNewSkill((prev) => ({ ...prev, [name]: event.target.value }));
+    const value = event.target.value;
+    setNewSkill((prev) => ({ ...prev, [name]: value }));
   }
 
   const saveNewSkill = (skill) => {
@@ -82,7 +83,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
       <Form.Label>Skills</Form.Label>
       {data.skills.map((item, index) => {
         return (
-          <Card className="active-shadow" style={{ width: '20rem', margin: '.5rem' }} onClick={() => {
+          <Card className="active-shadow mt-3" style={{ width: '20rem'}} onClick={() => {
             setShowEditModal(index)
             setEditSkill(item)
           }}>
@@ -100,7 +101,7 @@ export default function CoreCompetencyForm({ data, onUpdate }) {
         )
       }
       )}
-      <div className="mb-3">
+      <div className="mb-3 mt-3">
         <Button type="button" variant='primary' onClick={() => setShowAddModal(true)} size='m'>
           + Add Skill
         </Button>

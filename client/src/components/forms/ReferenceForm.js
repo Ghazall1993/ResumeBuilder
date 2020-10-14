@@ -47,6 +47,7 @@ export default function ReferenceForm({ data, onUpdate }) {
     const allReferences = [...data.referees];
     allReferences.splice(index, 1);
     onUpdate({ references: { ...data, referees: allReferences } });
+    setShowEditModal(-1)
   }
 
 
@@ -96,7 +97,14 @@ export default function ReferenceForm({ data, onUpdate }) {
             );
           } else {
             return (
-              <Card border="primary" style={{ width: '20rem', margin: '.5rem' }}>
+              <Card
+                className="active-shadow  mt-3"
+                style={{ width: '20rem' }}
+                onClick={() => {
+                  setShowEditModal(index)
+                  setEditReference(item)
+                }}
+              >
                 <Card.Body>
                   <Card.Subtitle>Name:</Card.Subtitle>
                   <Card.Text>
@@ -106,24 +114,16 @@ export default function ReferenceForm({ data, onUpdate }) {
                   <Card.Text>
                     {item.email}
                   </Card.Text>
-                  <div>
-                    <Button variant="primary" type="button" style={{ margin: '.2rem' }}
-                      onClick={() => {
-                        setShowEditModal(index)
-                        setEditReference(item)
-                      }
-                      }>Edit</Button>
-                    <Button variant="danger" type="button"
-                      onClick={() => deleteReference(index)}>Delete</Button>
-                  </div>
                 </Card.Body>
               </Card>
             )
           }
         })
       }
-      <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)} size='m'>+ Add Reference</Button>
+      <div className="mb-3 mt-3">
+        <Button type="button" variant='primary'
+          onClick={() => setShowAddModal(true)} size='m'>+ Add Reference</Button>
+      </div>
       <CustomModal
         title="Add Reference"
         show={showAddModal}
@@ -137,6 +137,7 @@ export default function ReferenceForm({ data, onUpdate }) {
         show={showEditModal > -1}
         onClose={() => setShowEditModal(-1)}
         onSubmit={saveEdittedReference}
+        onDelete={() => deleteReference(editReference)}
       >
         <ReferenceInformationForm reference={editReference} onReferenceChange={onExistingReferenceChange} />
       </CustomModal>

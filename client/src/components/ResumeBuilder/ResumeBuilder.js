@@ -21,6 +21,7 @@ export default function ResumeBuilder(props) {
 
   const [selectedSection, setSelectedSection] = useState('personal_info');
   const [resumeData, setResumeData] = useState(() => initialResumeData);
+
   const sendData = (newData) => {
     axios.post(
       '/resume', { resumeData: newData }
@@ -28,7 +29,8 @@ export default function ResumeBuilder(props) {
       console.log("Sent data seccessfully!")
     }).catch(error => console.log(error));
   }
-  const sendDataDebounced = useCallback(debounce(sendData, 1000), [])
+  const sendDataDebounced = useCallback(debounce(sendData, 1000), []);
+
   useEffect(() => {
     sendDataDebounced(resumeData);
   }, [resumeData, sendDataDebounced])
@@ -48,7 +50,6 @@ export default function ResumeBuilder(props) {
     setSelectedSection(value);
   }
 
-
   const sections = [
     { id: "personal_info", title: "Personal Information", component: <PersonalInformationForm onUpdate={resumeDataOnUpdate} data={resumeData.personal_info} /> },
     { id: "summary", title: "Summary", component: <SummaryForm onUpdate={resumeDataOnUpdate} data={resumeData.summary} /> },
@@ -58,11 +59,11 @@ export default function ResumeBuilder(props) {
     { id: "references", title: "References", component: <ReferenceForm onUpdate={resumeDataOnUpdate} data={resumeData.references} /> }
   ]
   const findTitleByID = (sectionID) => {
-    return (sections.find(element => element.id === sectionID)).title
+    return (sections.find(element => element.id === sectionID)).title;
   }
 
   const findComponentByID = (sectionID) => {
-    return (sections.find(element => element.id === sectionID)).component
+    return (sections.find(element => element.id === sectionID)).component;
   }
 
   return (

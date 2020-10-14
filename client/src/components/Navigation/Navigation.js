@@ -15,6 +15,7 @@ export default function Navigation() {
   const [isRegistered, setIsRegistered] = useState(false);
 
   const history = useHistory();
+
   const handleLogout = (event) => {
     event.preventDefault();
     axios.get(
@@ -22,14 +23,8 @@ export default function Navigation() {
     ).then(() => {
       setIsLoggedIn(false);
       setIsRegistered(false);
-      history.replace('/Login');
+      history.replace('/login');
     }).catch(error => console.log(error));
-
-
-  }
-
-  const handleShowingRegistrationBtn = (data) => {
-    setIsRegistered(data);
   }
 
   const handleRegisteredUsers = (data) => {
@@ -51,9 +46,9 @@ export default function Navigation() {
         YourResume.Rock
         </Navbar.Brand>
         <Nav className="ml-auto">
-        {!isLoggedIn || !isRegistered ?
-          <Nav.Link as={Link} to="/resume">Build Resume</Nav.Link> : null
-        }
+          {!isLoggedIn || !isRegistered ?
+            <Nav.Link as={Link} to="/resume">Build Resume</Nav.Link> : null
+          }
           {isLoggedIn ?
             <Button variant="outline-secondary" onClick={handleLogout}>Logout</Button>
             : isRegistered ? null :
@@ -66,26 +61,28 @@ export default function Navigation() {
           }
         </Nav>
       </Navbar>
+
       <Switch>
         <Route path="/login">
           <Login
             setIsLoggedIn={setIsLoggedIn}
-            onUpdate={handleShowingRegistrationBtn}
+            onUpdate={(e) => setIsRegistered(e)}
           />
         </Route>
+
         <Route path="/registration">
           <Registration
-            onUpdate={handleRegisteredUsers} 
-            />
+            onUpdate={handleRegisteredUsers}
+          />
         </Route>
+
         <Route path="/resume">
           <ResumeBuilder />
         </Route>
+
         <Route path="/">
           {isLoggedIn ? <ResumeBuilder /> : <Landing />}
         </Route>
-
-
       </Switch>
     </>
   )

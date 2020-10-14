@@ -10,11 +10,11 @@ import ExperienceSection from "./ExperienceSection"
 
 export default function CustomerServiceTemplate(props) {
   const pageRef = useRef(null);
-  const [ratio, setRatio] = useState()
-  const scaleStyle ={ transform: `scale(${ratio * .9})`, transformOrigin: 'top left ', overflow: 'hidden' }
-  const noScaleStyle = { transform: `scale(${0.64})`, transformOrigin: 'top left ', overflow: 'hidden'  }
+  const [ratio, setRatio] = useState();
+  const scaleStyle ={ transform: `scale(${ratio * .9})`, transformOrigin: 'top left ', overflow: 'hidden' };
+  const noScaleStyle = { transformOrigin: 'top left ', overflow: 'hidden'  };
+  // Computes the ratio of the resume regarding its parent element
   const handleResize = () => {
-    console.log('resized to: ', window.innerWidth, 'x', window.innerHeight)
     if (pageRef.current && pageRef.current.parentElement && pageRef.current.parentElement.offsetWidth){
       setRatio(pageRef.current.parentElement.offsetWidth / pageRef.current.offsetWidth)
     }
@@ -22,9 +22,8 @@ export default function CustomerServiceTemplate(props) {
   useEffect(() => {
     window.addEventListener('resize', handleResize)
     handleResize()
-  }, [])
+  }, []);
 
-  // comment line below to check an example of full page resume template!
   const data = props.data;
 
   const rightContent = (data.experience || data.summary) ?
@@ -32,10 +31,6 @@ export default function CustomerServiceTemplate(props) {
       <SummarySection heading={data.summary ? data.summary.heading : undefined} body={data.summary ? data.summary.body : undefined} />
       <ExperienceSection heading={data.experience ? data.experience.heading : undefined} experiences={data.experience ? data.experience.experiences : undefined} />
     </div> : null
-  //At first, when the data is an empty object, the users should see a blank resume template
-  if (!Object.keys(data).length) {
-    return (<div ref={pageRef} style={{ transform: `scale(${ratio * .9})`, transformOrigin: 'top left', overflow: 'hidden' }} className="container-fluid page"/>);
-  }
 
   return (
     <div ref={pageRef} style={ props.noSclae? noScaleStyle:scaleStyle} className="container-fluid page printable">

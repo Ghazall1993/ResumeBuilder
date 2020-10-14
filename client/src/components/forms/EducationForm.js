@@ -55,6 +55,7 @@ export default function EducationForm({ data, onUpdate }) {
   const deleteEducation = (index) => {
     const allEducations = [...data.educationInfo];
     allEducations.splice(index, 1);
+    setShowEditModal(-1)
     onUpdate({ educations: { ...data, educationInfo: allEducations } });
   }
   const onNewInProgressChange = () => {
@@ -88,7 +89,15 @@ export default function EducationForm({ data, onUpdate }) {
       {(data == null) ? "" :
         data.educationInfo.map((item, index) => {
           return (
-            <Card key={item.fieldOfStudy} border="primary" style={{ width: '28rem', margin: '.3rem' }}>
+            <Card
+              key={item.fieldOfStudy}
+              className="active-shadow mt-3"
+              style={{ width: '28rem'}}
+              onClick={() => {
+                setShowEditModal(index)
+                setEditEducation(item)
+              }}
+            >
               <Card.Body>
                 <Card.Title>{item.institution}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
@@ -97,35 +106,16 @@ export default function EducationForm({ data, onUpdate }) {
                 <Card.Text>
                   {item.typeOfDegree} - {item.fieldOfStudy}
                 </Card.Text>
-                <div>
-                  <Button
-                    variant="primary"
-                    type="button"
-                    style={{ margin: '.2rem' }}
-                    onClick={() => {
-                      setShowEditModal(index)
-                      setEditEducation(item)
-                    }
-                    }>
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    type="button"
-                    onClick={() =>
-                      deleteEducation(index)}
-                  >
-                    Delete
-                    </Button>
-                </div>
               </Card.Body>
             </Card>
           )
         }
         )}
-      <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)}
-        size='md'>+ Add Education</Button>
+      <div className="mb-3 mt-3">
+        <Button type="button" variant='primary'
+          onClick={() => setShowAddModal(true)}
+          size='md'>+ Add Education</Button>
+      </div>
       <CustomModal
         title="Add Education"
         show={showAddModal}
@@ -139,6 +129,7 @@ export default function EducationForm({ data, onUpdate }) {
         show={showEditModal > -1}
         onClose={() => setShowEditModal(-1)}
         onSubmit={saveEdittedEducation}
+        onDelete={()=> deleteEducation(editEducation)}
       >
         <EducationInformationForm education={editEducation} onEducationChange={onExistingEducationChange} onInProgressChange={onExistingInProgressChange} />
       </CustomModal >
@@ -183,16 +174,15 @@ function EducationInformationForm({ education, onEducationChange, onInProgressCh
       <Form.Row>
         <Form.Group as={Col} xs={6} controlId="start_date">
           <Form.Label>Start Date</Form.Label>
-          <DatePicker selected={education.start_date}
+          <DatePicker className="form-control" selected={education.start_date}
             onChange={(start_date) => onEducationChange({ target: { id: 'start_date', value: start_date } })}
           />
         </Form.Group>
-        <Form.Group as={Col} xs={6} controlId="end_date">
+        <Form.Group as={Col} controlId="end_date">
           <Form.Label>End Date</Form.Label>
-          <DatePicker disabled={education.in_progress}
+          <DatePicker className="form-control" disabled={education.in_progress}
             selected={education.end_date}
             onChange={(end_date) => onEducationChange({ target: { id: 'end_date', value: end_date } })}
-            value={education.end_date ? new Date(education.end_date) : new Date()}
           />
         </Form.Group>
         <Col xs="auto" style={{ position: 'absolute', right: '8rem', bottom: '5px' }}>

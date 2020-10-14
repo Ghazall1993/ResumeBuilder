@@ -41,19 +41,14 @@
 }
 .page {
   margin: auto;
-  width: 32.76cm;
+  width: 29.76cm;
   height: 46.332cm;
 }
-.page1 {
-  width: 32.76cm;
-  height: 46.332cm;
-  overflow: scroll;
+/* .page {
   margin: auto;
-  border: 1px #D3D3D3 solid;
-  border-radius: 5px;
-  background: white;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
+  width: 32.76cm;
+  height: 46.332cm;
+} */
 
 @media print {
   .non-printable {

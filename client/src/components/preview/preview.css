@@ -46,3 +46,11 @@
     display: block;
   }
 }
+.upload-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.spaced {
+  margin-left: 3em;
+}

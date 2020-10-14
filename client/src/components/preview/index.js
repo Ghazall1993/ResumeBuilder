@@ -11,11 +11,10 @@ export default function Preview({ onUpdate, data }) {
   const [showMenu, setShowMenu] = useState(true);
   const [fullscreen, setFullscreen] = useState(false);
 
-  const showImportBtn = () => Object.keys(data).length === 0
-
   const exportJSON = useCallback(() => {
     fileDownload(JSON.stringify(data), 'resume.json');
-  }, [data])
+  }, [data]);
+
   const onFileImported = (data) => {
     setShowMenu(true);
     setShowUpload(false)
@@ -30,6 +29,13 @@ export default function Preview({ onUpdate, data }) {
     }
     onUpdate(importedData)
   }
+
+  const onCancelUpload = () => {
+    setShowUpload(false);
+    setShowMenu(true);
+  }
+
+
   function convertDates(items) {
     for (const item of items) {
       if (item.start_date!==""){
@@ -41,10 +47,7 @@ export default function Preview({ onUpdate, data }) {
     }
   }
 
-  const handleClose = (e) => {
-    e.target.style.display = 'none';
-    setFullscreen(false);
-  }
+
 
   return (
     <>
@@ -55,7 +58,6 @@ export default function Preview({ onUpdate, data }) {
               <ButtonGroup className="previw-bar mt-2">
                 <Button
                   variant="light"
-                  disabled={showImportBtn()}
                   onClick={() => {
                     try {
                       document.execCommand('print', false, null);
@@ -66,14 +68,12 @@ export default function Preview({ onUpdate, data }) {
                   }}
                 >Export to PDF</Button>
                 <Button
-                  disabled={showImportBtn()}
                   variant="light"
                   onClick={() => { setFullscreen(true) }}
                 >
                   Fullscreen
             </Button>
                 <Button
-                  disabled={showImportBtn()}
                   variant="light"
                   onClick={exportJSON}
                 >
@@ -92,14 +92,14 @@ export default function Preview({ onUpdate, data }) {
         {
           fullscreen &&
           <div className="overlay">
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="secondary" onClick={() => setFullscreen(false)}>
               Close
           </Button>
             <CustomerServiceTemplate data={data} />
           </div>
         }
-        <div >
-          {showUpload ? <Upload onFileImported={onFileImported} /> : <CustomerServiceTemplate data={data} />}
+        <div className="spaced">
+          {showUpload ? <Upload onFileImported={onFileImported} onCancel={onCancelUpload} /> : <CustomerServiceTemplate data={data} />}
         </div>
       </div >
     </>

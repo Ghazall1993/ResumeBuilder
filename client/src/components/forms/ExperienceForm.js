@@ -52,6 +52,7 @@ export default function ExperienceForm({ data, onUpdate }) {
   const deleteExperience = (index) => {
     const allExperiences = [...data.experiences];
     allExperiences.splice(index, 1)
+    setShowEditModal(-1)
     onUpdate({ experience: { ...data, experiences: allExperiences } });
   }
 
@@ -102,7 +103,13 @@ export default function ExperienceForm({ data, onUpdate }) {
       {(data == null) ? "" :
         (data.experiences || []).map((item, index) => {
           return (
-            <Card key={item.description} border="primary" style={{ width: '28rem', margin: '.3rem' }}>
+            <Card key={item.description}
+              className="active-shadow mt-3"
+              style={{ width: '28rem' }}
+              onClick={() => {
+                setShowEditModal(index)
+                setEditExperience(item)
+              }} >
               <Card.Body>
                 <Card.Title>{item.employer_name}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">
@@ -111,26 +118,16 @@ export default function ExperienceForm({ data, onUpdate }) {
                 <Card.Text>
                   {item.responsibilities[0]}
                 </Card.Text>
-                <div>
-                  <Button variant="primary" type="button" style={{ margin: '.2rem' }}
-                    onClick={() => {
-                      setShowEditModal(index)
-                      setEditExperience(item)
-                    }
-                    }>Edit</Button>
-                  <Button variant="danger" type="button"
-                    onClick={() => deleteExperience(index)}>Delete</Button>
-                </div>
               </Card.Body>
             </Card>
           )
         }
         )}
 
-
-      <Button type="button" variant='primary'
-        onClick={() => setShowAddModal(true)} size='m'>+ Add Experience</Button>
-
+      <div className="mb-3 mt-3">
+        <Button type="button" className variant='primary'
+          onClick={() => setShowAddModal(true)} size='m'>+ Add Experience</Button>
+      </div>
       <CustomModal
         title="Add Experience"
         show={showAddModal}
@@ -145,6 +142,7 @@ export default function ExperienceForm({ data, onUpdate }) {
         show={showEditModal > -1}
         onClose={() => setShowEditModal(-1)}
         onSubmit={() => saveEdittedExperience(editExperience)}
+        onDelete={() => deleteExperience(editExperience)}
       >
         <ExperienceInformationForm experience={editExperience} onExperienceChange={handleEditExperienceChange} onInProgressChange={onExistingInProgressChange} />
       </CustomModal>
